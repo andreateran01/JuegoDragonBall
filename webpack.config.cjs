@@ -1,0 +1,50 @@
+const path = require('path');
+
+module.exports = {
+  mode: 'development', // Modo desarrollo
+  entry: './src/index.js', // Archivo de entrada
+  output: {
+    path: path.resolve(__dirname, 'dist'),
+    filename: 'bundle.js', // Archivo de salida
+  },
+  devServer: {
+    static: [
+      {
+        directory: path.resolve(__dirname, 'dist'),
+      },
+      {
+        directory: path.resolve(__dirname, 'public'),
+        publicPath: '/public',
+      }
+    ],
+    port: 3000,
+    open: true,
+    hot: true,
+  },
+  module: {
+    rules: [
+      {
+        test: /\.js$/, // Archivos JS
+        exclude: /node_modules/,
+        use: {
+          loader: 'babel-loader',
+          options: {
+            presets: ['@babel/preset-env']
+          }
+        }
+      },
+      {
+        test: /\.scss$/, // Procesar archivos SCSS de Bootstrap
+        use: ['style-loader', 'css-loader', 'sass-loader']
+      },
+      {
+        test: /\.css$/, // Procesar archivos CSS
+        use: ['style-loader', 'css-loader']
+      },
+      {
+        test: /\.(woff|woff2|eot|ttf|otf|svg)$/, // Carga fuentes de FontAwesome
+        type: 'asset/resource',
+      }
+    ]
+  }
+};
