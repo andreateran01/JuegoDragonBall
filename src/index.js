@@ -33,6 +33,9 @@ let turno = 1;
 let espera1 = 1, espera2 = 1;
 let fin = false;
 
+let semillas1 = 2;
+let semillas2 = 2;
+
 const barras = () => {
     if (jugador1) {
         vida1.style.width = `${jugador1.getVida()}%`;
@@ -99,7 +102,6 @@ const revisar_fin = () => {
     if (v1 > 0 && v2 > 0) return false;
     fin = true;
     
-    // Determinamos quién ganó y quién fue derrotado
     const ganador = v1 <= 0 ? nombre2.value : nombre1.value;
     const personajeGanador = v1 <= 0 ? pj2 : pj1;
     
@@ -113,12 +115,15 @@ const revisar_fin = () => {
             text: `${ganador} (${personajeGanador}) has derrotado a ${perdedor} (${personajePerdedor})`,
             allowOutsideClick: false,
             allowEscapeKey: false
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = "index.html"; 
+            }
         });
     }, 1600);
     return true;
 };
 
-// Alerta para comenzar la batalla 
 const iniciar_combate = () => {
     nombres.classList.add("d-none");
     let intervalo;
@@ -215,15 +220,23 @@ if (btn_py1) {
             if (accion.includes("semilla") && jugador1.getVida() >= 100) {
                 return msj_error("Vida al maximo, no puedes usar semillas");
             }
+            
+            if (accion.includes("semilla")) {
+                if (semillas1 <= 0) {
+                    return msj_error("¡Ya no tienes semillas del ermitaño disponibles!");
+                }
+                semillas1--;
+                usar_semilla(jugador1);
+            }
+
             if (accion.includes("ataque básico")) {
                 atk_basico(jugador1, jugador2, pj1);
             } else if (especial) {
                 atk_especial(jugador1, jugador2, pj1);
             } else if (accion.includes("cargar ki")) {
                 cargar_ki(jugador1);
-            } else if (accion.includes("semilla")) {
-                usar_semilla(jugador1);
             }
+
             if (especial) {
                 espera1 = 1;
             } else if (espera1 > 0) {
@@ -250,15 +263,23 @@ if (btn_py2) {
             if (accion.includes("semilla") && jugador2.getVida() >= 100) {
                 return msj_error("Vida al maximo, no puedes usar semillas");
             }
+
+            if (accion.includes("semilla")) {
+                if (semillas2 <= 0) {
+                    return msj_error("¡Ya no tienes semillas del ermitaño disponibles!");
+                }
+                semillas2--;
+                usar_semilla(jugador2);
+            }
+
             if (accion.includes("ataque básico")) {
                 atk_basico(jugador2, jugador1, pj2);
             } else if (especial) {
                 atk_especial(jugador2, jugador1, pj2);
             } else if (accion.includes("cargar ki")) {
                 cargar_ki(jugador2);
-            } else if (accion.includes("semilla")) {
-                usar_semilla(jugador2);
             }
+
             if (especial) {
                 espera2 = 1;
             } else if (espera2 > 0) {
